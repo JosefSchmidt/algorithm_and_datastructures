@@ -20,7 +20,7 @@ public class Aflevering_1_6 {
                 if (s.charAt(0) == 'I') {
                     stack.push((int) s.charAt(2));
                 }
-                if (s.charAt(0) == 'E') {
+                else if (s.charAt(0) == 'E' && stack.size() > 0) {
                     int returnedValue = stack.pop();
                     if (returnedValue == (int) s.charAt(2)) {
                         isStackValid = "YES";
@@ -42,11 +42,10 @@ public class Aflevering_1_6 {
                 if (s.charAt(0) == 'I') {
                     queue.add((int) s.charAt(2));
                 }
-                if (s.charAt(0) == 'E') {
+                else if (s.charAt(0) == 'E' && queue.size() > 0) {
 
                     int returnedValue = queue.poll();
-                    int value = s.charAt(2);
-                    if (returnedValue == value) {
+                    if (returnedValue == (int) s.charAt(2)) {
                         isQueueValid = "YES";
                     } else {
                         isQueueValid = "NO";
@@ -57,26 +56,25 @@ public class Aflevering_1_6 {
         }
 
         if (type.equals(FIRST_IN_QUEUE)) {
-            List<Integer> queueLast = new ArrayList<>();
+            List<Integer> queueLast = new LinkedList<>();
             String isQueueLastValid = "NO";
 
             for (String s : array) {
                 if (s.charAt(0) == 'I') {
                     queueLast.add((int) s.charAt(2));
                 }
-                if (s.charAt(0) == 'E') {
+                else if (s.charAt(0) == 'E' && queueLast.size() > 0) {
 
                     int smallestValue = Collections.min(queueLast);
 
-                    for (int i = queueLast.size() - 1; i >= 0; i--) {
+                    for (int i = 0; i < queueLast.size(); i++) {
                         if (queueLast.get(i) == smallestValue) {
                             queueLast.remove(i);
                             break;
                         }
                     }
 
-                    int value = s.charAt(2);
-                    if (smallestValue == value) {
+                    if (smallestValue == (int) s.charAt(2)) {
                         isQueueLastValid = "YES";
                     } else {
                         isQueueLastValid = "NO";
@@ -98,6 +96,8 @@ public class Aflevering_1_6 {
             String input = in.nextLine();
             array[i] = input;
         }
+
+
 
         checkDataStructure(QUEUE, array);
         checkDataStructure(STACK, array);
