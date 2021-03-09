@@ -4,25 +4,20 @@ import java.util.*;
 
 public class Aflevering_1_6 {
 
-    public static void checkDataStructure(AbstractDataType dataType, String[] array) {
-
-        String isValid = "NO";
+    public static void checkDataStructure(AbstractDataType dataType, List<String> array) {
 
         for (String s : array) {
+
             if (s.charAt(0) == 'I') {
                 dataType.insert(s.charAt(2));
-            }
-
-            if (s.charAt(0) == 'E') {
-                if (dataType.extract() == (int) s.charAt(2)) {
-                    isValid = "YES";
-                } else {
-                    isValid = "NO";
-                }
+            } else if (s.charAt(0) == 'E' && dataType.extract() != (int) s.charAt(2)) {
+                System.out.println("NO");
+                return;
             }
         }
+
         // Print the result
-        System.out.println(isValid);
+        System.out.println("YES");
     }
 
 
@@ -30,30 +25,39 @@ public class Aflevering_1_6 {
         Scanner in = new Scanner(System.in);
 
         int n = in.nextInt();
-        String[] array = new String[n];
+
+        ArrayList<String> array = new ArrayList<>();
         in.nextLine();
 
-        for (int i = 0; i < array.length; i++) {
-            String input = in.nextLine();
-            array[i] = input;
+        if (n <= 1) {
+            System.out.println("YES");
+            System.out.println("YES");
+            System.out.println("YES");
+            return;
         }
 
+        for (int i = 0; i < n; i++) {
+            String input = in.nextLine();
+            array.add(input);
+        }
 
         checkDataStructure(new MyQueue(), array);
         checkDataStructure(new MyStack(), array);
         checkDataStructure(new MyPriorityQueue(), array);
-
     }
 }
 
 
 abstract class AbstractDataType {
     abstract int extract();
+
     abstract void insert(int value);
+
+    abstract int getSize();
 }
 
 class MyQueue extends AbstractDataType {
-    Queue<Integer> queue;
+    public Queue<Integer> queue;
 
     public MyQueue() {
         this.queue = new LinkedList<>();
@@ -61,17 +65,26 @@ class MyQueue extends AbstractDataType {
 
     @Override
     public int extract() {
-        return this.queue.poll();
+        if (queue.size() > 0) {
+            return this.queue.poll();
+        } else {
+            return -1;
+        }
     }
 
     @Override
     public void insert(int value) {
         this.queue.add(value);
     }
+
+    @Override
+    int getSize() {
+        return this.queue.size();
+    }
 }
 
 class MyStack extends AbstractDataType {
-    Stack<Integer> stack;
+    public Stack<Integer> stack;
 
     public MyStack() {
         this.stack = new Stack<>();
@@ -79,19 +92,28 @@ class MyStack extends AbstractDataType {
 
     @Override
     public int extract() {
-        return this.stack.pop();
+        if (stack.size() > 0) {
+            return this.stack.pop();
+        } else {
+            return -1;
+        }
     }
 
     @Override
     public void insert(int value) {
         this.stack.add(value);
     }
+
+    @Override
+    int getSize() {
+        return this.stack.size();
+    }
 }
 
 
 class MyPriorityQueue extends AbstractDataType {
 
-    PriorityQueue<Integer> priorityQueue;
+    public PriorityQueue<Integer> priorityQueue;
 
     public MyPriorityQueue() {
         this.priorityQueue = new PriorityQueue<>();
@@ -99,12 +121,21 @@ class MyPriorityQueue extends AbstractDataType {
 
     @Override
     public int extract() {
-        return priorityQueue.poll();
+        if (priorityQueue.size() > 0) {
+            return priorityQueue.poll();
+        } else {
+            return -1;
+        }
     }
 
     @Override
     public void insert(int value) {
         this.priorityQueue.add(value);
+    }
+
+    @Override
+    int getSize() {
+        return this.priorityQueue.size();
     }
 }
 
