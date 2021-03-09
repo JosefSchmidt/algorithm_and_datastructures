@@ -8,15 +8,20 @@ public class Aflevering_1_6 {
 
         for (String s : array) {
 
-            if (s.charAt(0) == 'I') {
-                dataType.insert(s.charAt(2));
-            } else if (s.charAt(0) == 'E' && dataType.extract() != (int) s.charAt(2)) {
+            String operator = s.substring(0, 1);
+            int length = s.length();
+            int value = Integer.parseInt(s.substring(2, length));
+
+            if (operator.equals("I")) {
+                dataType.insert(value);
+            }
+
+            if (operator.equals("E") && dataType.extract() != value) {
                 System.out.println("NO");
                 return;
             }
         }
 
-        // Print the result
         System.out.println("YES");
     }
 
@@ -35,6 +40,7 @@ public class Aflevering_1_6 {
             System.out.println("YES");
             return;
         }
+
 
         for (int i = 0; i < n; i++) {
             String input = in.nextLine();
@@ -74,6 +80,7 @@ class MyQueue extends AbstractDataType {
 
     @Override
     public void insert(int value) {
+        if (value < 0 || value > 2000) return;
         this.queue.add(value);
     }
 
@@ -101,6 +108,7 @@ class MyStack extends AbstractDataType {
 
     @Override
     public void insert(int value) {
+        if (value < 0 || value > 2000) return;
         this.stack.add(value);
     }
 
@@ -130,6 +138,7 @@ class MyPriorityQueue extends AbstractDataType {
 
     @Override
     public void insert(int value) {
+        if (value < 0 || value > 2000) return;
         this.priorityQueue.add(value);
     }
 
