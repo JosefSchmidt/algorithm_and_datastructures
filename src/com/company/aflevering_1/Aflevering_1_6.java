@@ -4,86 +4,27 @@ import java.util.*;
 
 public class Aflevering_1_6 {
 
-    public static String STACK = "STACK";
-    public static String QUEUE = "QUEUE";
-    public static String FIRST_IN_QUEUE = "FIRST_IN_QUEUE";
+    public static void checkDataStructure(AbstractDataType dataType, String[] array) {
 
+        String isValid = "NO";
 
-    public static void checkDataStructure(String type, String[] array) {
+        for (String s : array) {
+            if (s.charAt(0) == 'I') {
+                dataType.insert(s.charAt(2));
+            }
 
-        // Check if it could be one of the 3 data structures
-        if (type.equals(STACK)) {
-            Stack<Integer> stack = new Stack<>();
-            String isStackValid = "NO";
-
-            for (String s : array) {
-                if (s.charAt(0) == 'I') {
-                    stack.push((int) s.charAt(2));
-                }
-                else if (s.charAt(0) == 'E' && stack.size() > 0) {
-                    int returnedValue = stack.pop();
-                    if (returnedValue == (int) s.charAt(2)) {
-                        isStackValid = "YES";
-                    } else {
-                        isStackValid = "NO";
-                    }
+            if (s.charAt(0) == 'E') {
+                if (dataType.extract() == (int) s.charAt(2)) {
+                    isValid = "YES";
+                } else {
+                    isValid = "NO";
                 }
             }
-            // Print the result
-            System.out.println(isStackValid);
-
         }
-
-        if (type.equals(QUEUE)) {
-            Queue<Integer> queue = new LinkedList<>();
-            String isQueueValid = "NO";
-
-            for (String s : array) {
-                if (s.charAt(0) == 'I') {
-                    queue.add((int) s.charAt(2));
-                }
-                else if (s.charAt(0) == 'E' && queue.size() > 0) {
-
-                    int returnedValue = queue.poll();
-                    if (returnedValue == (int) s.charAt(2)) {
-                        isQueueValid = "YES";
-                    } else {
-                        isQueueValid = "NO";
-                    }
-                }
-            }
-            System.out.println(isQueueValid);
-        }
-
-        if (type.equals(FIRST_IN_QUEUE)) {
-            List<Integer> queueLast = new LinkedList<>();
-            String isQueueLastValid = "NO";
-
-            for (String s : array) {
-                if (s.charAt(0) == 'I') {
-                    queueLast.add((int) s.charAt(2));
-                }
-                else if (s.charAt(0) == 'E' && queueLast.size() > 0) {
-
-                    int smallestValue = Collections.min(queueLast);
-
-                    for (int i = 0; i < queueLast.size(); i++) {
-                        if (queueLast.get(i) == smallestValue) {
-                            queueLast.remove(i);
-                            break;
-                        }
-                    }
-
-                    if (smallestValue == (int) s.charAt(2)) {
-                        isQueueLastValid = "YES";
-                    } else {
-                        isQueueLastValid = "NO";
-                    }
-                }
-            }
-            System.out.println(isQueueLastValid);
-        }
+        // Print the result
+        System.out.println(isValid);
     }
+
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
@@ -98,12 +39,72 @@ public class Aflevering_1_6 {
         }
 
 
-
-        checkDataStructure(QUEUE, array);
-        checkDataStructure(STACK, array);
-        checkDataStructure(FIRST_IN_QUEUE, array);
-
+        checkDataStructure(new MyQueue(), array);
+        checkDataStructure(new MyStack(), array);
+        checkDataStructure(new MyPriorityQueue(), array);
 
     }
-
 }
+
+
+abstract class AbstractDataType {
+    abstract int extract();
+    abstract void insert(int value);
+}
+
+class MyQueue extends AbstractDataType {
+    Queue<Integer> queue;
+
+    public MyQueue() {
+        this.queue = new LinkedList<>();
+    }
+
+    @Override
+    public int extract() {
+        return this.queue.poll();
+    }
+
+    @Override
+    public void insert(int value) {
+        this.queue.add(value);
+    }
+}
+
+class MyStack extends AbstractDataType {
+    Stack<Integer> stack;
+
+    public MyStack() {
+        this.stack = new Stack<>();
+    }
+
+    @Override
+    public int extract() {
+        return this.stack.pop();
+    }
+
+    @Override
+    public void insert(int value) {
+        this.stack.add(value);
+    }
+}
+
+
+class MyPriorityQueue extends AbstractDataType {
+
+    PriorityQueue<Integer> priorityQueue;
+
+    public MyPriorityQueue() {
+        this.priorityQueue = new PriorityQueue<>();
+    }
+
+    @Override
+    public int extract() {
+        return priorityQueue.poll();
+    }
+
+    @Override
+    public void insert(int value) {
+        this.priorityQueue.add(value);
+    }
+}
+
