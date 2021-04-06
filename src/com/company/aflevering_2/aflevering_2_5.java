@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
-public class aflevering_2_5 {
+class aflevering_2_5 {
 
     public static ArrayList<Node> nodes = new ArrayList<Node>();
 
