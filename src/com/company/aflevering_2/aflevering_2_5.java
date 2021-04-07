@@ -10,12 +10,12 @@ class aflevering_2_5 {
     public static ArrayList<Node> nodes = new ArrayList<Node>();
 
     static class Node {
-        int houseNumber;
+        int staffNumber;
         List<Node> neighbours;
 
 
-        public Node(int houseNumber) {
-            this.houseNumber = houseNumber;
+        public Node(int staffNumber) {
+            this.staffNumber = staffNumber;
             this.neighbours = new ArrayList<Node>();
         }
 
@@ -30,21 +30,24 @@ class aflevering_2_5 {
 
     }
 
-    public static void topologicalSort(ArrayList<Node> nodes) {
+    public static void groupSortAlgorithm(ArrayList<Node> nodes) {
 
         ArrayList<Node> groupOne = new ArrayList<Node>();
         ArrayList<Node> groupTwo = new ArrayList<Node>();
 
 
-        for (int i = 0; i < nodes.size(); i++) {
-            Node baseNode = nodes.get(i);
+        if(nodes.size() == 1) {
+            System.out.println("NO");
+            return;
+        }
+
+        for (Node baseNode : nodes) {
 
             if (baseNode.getNeighbours().size() == 0 && groupOne.size() == 0) {
                 groupOne.add(baseNode);
 
             } else if (baseNode.getNeighbours().size() == 0) {
                 groupTwo.add(baseNode);
-
             } else {
 
                 ArrayList<Node> neighbours = (ArrayList<Node>) baseNode.neighbours;
@@ -57,14 +60,9 @@ class aflevering_2_5 {
                     boolean localGroupOneExist = doesElementExist(groupOne, neighbourNode);
                     boolean localGroupTwoExist = doesElementExist(groupTwo, neighbourNode);
 
-                    if (!groupOneExist && localGroupOneExist) {
-                        groupOneExist = localGroupOneExist;
-                    }
+                    if (!groupOneExist && localGroupOneExist) groupOneExist = localGroupOneExist;
 
-                    if (!groupTwoExist && localGroupTwoExist) {
-                        groupTwoExist = localGroupTwoExist;
-                    }
-
+                    if (!groupTwoExist && localGroupTwoExist) groupTwoExist = localGroupTwoExist;
 
                     if (groupOneExist && groupTwoExist) {
                         System.out.println("NO");
@@ -84,22 +82,21 @@ class aflevering_2_5 {
         String secondLine = "";
 
         for (Node node : groupOne) {
-            firstLine = firstLine + node.houseNumber + " ";
+            firstLine = firstLine + node.staffNumber + " ";
         }
 
         System.out.println(firstLine);
 
         for (Node node : groupTwo) {
-            secondLine = secondLine + node.houseNumber + " ";
+            secondLine = secondLine + node.staffNumber + " ";
         }
 
         System.out.println(secondLine);
-
     }
 
     public static boolean doesElementExist(ArrayList<Node> nodes, Node baseNode) {
         for (Node node : nodes) {
-            if (baseNode.houseNumber == node.houseNumber) {
+            if (baseNode.staffNumber == node.staffNumber) {
                 return true;
             }
         }
@@ -130,7 +127,7 @@ class aflevering_2_5 {
             secondNode.addNeighbours(firstNode);
         }
 
-        topologicalSort(nodes);
+        groupSortAlgorithm(nodes);
 
     }
 

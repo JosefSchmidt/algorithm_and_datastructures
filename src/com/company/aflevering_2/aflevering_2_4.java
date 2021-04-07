@@ -58,20 +58,21 @@ public class aflevering_2_4 {
 
             boolean shouldContinue = false;
 
+            // Prevent sending letters to nodes that has already received
             for (Node neighbour : neighbours) {
                 if (!neighbour.visited) shouldContinue = true;
             }
+            if (!shouldContinue) continue;
 
-            if(!shouldContinue) continue;
 
-            if(dayCount != currentDayCount) {
+            if (dayCount != currentDayCount) {
                 System.out.println("Day " + dayCount);
                 dayCount++;
             }
 
             for (Node n : neighbours) {
                 if (n != null && !n.visited) {
-                    
+
                     n.setDayCount(dayCount + 1);
                     queue.add(n);
                     n.visited = true;
