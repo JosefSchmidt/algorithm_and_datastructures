@@ -7,7 +7,7 @@ import java.util.*;
 
 class aflevering_2_5 {
 
-    public static ArrayList<Node> nodes = new ArrayList<Node>();
+    public static LinkedList<Node> nodes = new LinkedList<Node>();
 
     static class Node {
         int staffNumber;
@@ -19,6 +19,9 @@ class aflevering_2_5 {
             this.neighbours = new ArrayList<Node>();
         }
 
+        public int getStaffNumber() {
+            return staffNumber;
+        }
 
         public void addNeighbours(Node neighbourNode) {
             this.neighbours.add(neighbourNode);
@@ -30,13 +33,13 @@ class aflevering_2_5 {
 
     }
 
-    public static void groupSortAlgorithm(ArrayList<Node> nodes) {
+    public static void groupSortAlgorithm(LinkedList<Node> nodes) {
 
         ArrayList<Node> groupOne = new ArrayList<Node>();
         ArrayList<Node> groupTwo = new ArrayList<Node>();
 
 
-        if(nodes.size() == 1) {
+        if (nodes.size() == 1 || nodes.size() == 0) {
             System.out.println("NO");
             return;
         }
@@ -47,10 +50,12 @@ class aflevering_2_5 {
                 groupOne.add(baseNode);
 
             } else if (baseNode.getNeighbours().size() == 0) {
+
                 groupTwo.add(baseNode);
+
             } else {
 
-                ArrayList<Node> neighbours = (ArrayList<Node>) baseNode.neighbours;
+                ArrayList<Node> neighbours = (ArrayList<Node>) baseNode.getNeighbours();
 
                 boolean groupOneExist = false;
                 boolean groupTwoExist = false;
@@ -60,14 +65,13 @@ class aflevering_2_5 {
                     boolean localGroupOneExist = doesElementExist(groupOne, neighbourNode);
                     boolean localGroupTwoExist = doesElementExist(groupTwo, neighbourNode);
 
-                    if (!groupOneExist && localGroupOneExist) groupOneExist = localGroupOneExist;
+                    if (!groupOneExist && localGroupOneExist) groupOneExist = true;
+                    if (!groupTwoExist && localGroupTwoExist) groupTwoExist = true;
+                }
 
-                    if (!groupTwoExist && localGroupTwoExist) groupTwoExist = localGroupTwoExist;
-
-                    if (groupOneExist && groupTwoExist) {
-                        System.out.println("NO");
-                        return;
-                    }
+                if (groupOneExist && groupTwoExist) {
+                    System.out.println("NO");
+                    return;
                 }
 
                 if (!groupOneExist) {
@@ -78,32 +82,32 @@ class aflevering_2_5 {
             }
         }
 
-        String firstLine = "";
-        String secondLine = "";
+        Collections.sort(groupOne, (node1, node2) ->  ( node1.getStaffNumber() - node2.getStaffNumber()));
+        Collections.sort(groupTwo, (node1, node2) -> (  node1.getStaffNumber() - node2.getStaffNumber()));
+
+        StringBuilder firstLine = new StringBuilder();
+        StringBuilder secondLine = new StringBuilder();
 
         for (Node node : groupOne) {
-            firstLine = firstLine + node.staffNumber + " ";
+            firstLine.append(node.staffNumber).append(" ");
         }
 
         System.out.println(firstLine);
 
         for (Node node : groupTwo) {
-            secondLine = secondLine + node.staffNumber + " ";
+            secondLine.append(node.staffNumber).append(" ");
         }
 
         System.out.println(secondLine);
     }
 
     public static boolean doesElementExist(ArrayList<Node> nodes, Node baseNode) {
-        for (Node node : nodes) {
-            if (baseNode.staffNumber == node.staffNumber) {
-                return true;
-            }
-        }
+        for (Node node : nodes) if (baseNode.staffNumber == node.staffNumber) return true;
         return false;
     }
 
     public static void main(String[] args) throws IOException {
+
 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
@@ -128,7 +132,10 @@ class aflevering_2_5 {
         }
 
         groupSortAlgorithm(nodes);
-
     }
+
+
+
+
 
 }
