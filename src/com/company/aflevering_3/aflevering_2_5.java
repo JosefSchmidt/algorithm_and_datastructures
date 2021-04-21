@@ -23,19 +23,20 @@ public class aflevering_2_5 {
             this.distance = distance;
         }
 
-        public Node getNode() {
-            return node;
+        public void setNode(Node node) {
+            this.node = node;
         }
 
-        public int getDistance() {
-            return distance;
+        public void setDistance(int distance) {
+            this.distance = distance;
         }
     }
 
 
     public static class Node {
-        public boolean visited;
         int value;
+        Connection key = null;
+        Node parent;
         LinkedList<Connection> connections;
 
         public Node(int value) {
@@ -47,26 +48,50 @@ public class aflevering_2_5 {
             return connections;
         }
 
+        public void setKey(Connection key) {
+            this.key = key;
+        }
+
         public void createConnection(Node node, int weight) {
             connections.add(new Connection(node, weight));
         }
     }
 
-    public static void isItProfitable(Node node) {
+    public static void isItProfitable() {
 
-        queue.add(node);
-        node.visited = true;
+        // Add all element to queue
+        queue.addAll(nodesArray);
 
-        while(!queue.isEmpty()) {
+        Node node = nodesArray.get(0);
+        node.setKey(new Connection(node, 0));
+
+        while (!queue.isEmpty()) {
             Node element = queue.remove();
             LinkedList<Connection> neighbours = element.getConnections();
 
             // Get the lowest weight connection
+            Node currentNode = getLowestKey();
+            for (int i = 0; i < neighbours.size(); i++) {
+                if (neighbours.get(i).distance > currentNode.key.distance) {
+                    neighbours.get(i).node.key = currentNode.key;
+                    neighbours.get(i).node.parent = currentNode;
+                }
+            }
 
         }
     }
 
-    public Node 
+    public static Node getLowestKey() {
+        Node lowestNode = nodesArray.get(0);
+
+        for (int i = 0; i < nodesArray.size(); i++) {
+            if (lowestNode.key.distance > nodesArray.get(i).key.distance) {
+                lowestNode = nodesArray.get(i);
+            }
+        }
+
+        return lowestNode;
+    }
 
     public static void main(String[] args) throws IOException {
 
@@ -75,14 +100,14 @@ public class aflevering_2_5 {
         int n = Integer.parseInt(in.readLine());
 
         // Create Node objects
-        for (int i = 0; i <n; i++) nodesArray.add(new Node(i));
+        for (int i = 0; i < n; i++) nodesArray.add(new Node(i));
 
         int m = Integer.parseInt(in.readLine());
 
         // Calculate the total price is must cost
         maxCosts = Integer.parseInt(in.readLine()) * m;
 
-        for (int i = 0; i <m; i++) {
+        for (int i = 0; i < m; i++) {
             StringTokenizer st = new StringTokenizer(in.readLine());
 
             int firstValue = Integer.parseInt(st.nextToken());
@@ -96,7 +121,8 @@ public class aflevering_2_5 {
             secondNode.createConnection(firstNode, weight);
         }
 
-        isItProfitable(nodesArray.get(0));
+        isItProfitable();
+
 
     }
 }
