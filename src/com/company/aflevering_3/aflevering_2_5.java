@@ -4,15 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
-import java.util.Queue;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 public class aflevering_2_5 {
 
-    public static LinkedList<Node> nodesArray = new LinkedList<Node>();
-    public static Queue<Node> queue = new LinkedList<Node>();
     public static int maxCosts;
-
 
     public static class Connection {
         Node node;
@@ -22,34 +19,15 @@ public class aflevering_2_5 {
             this.node = node;
             this.distance = distance;
         }
-
-        public void setNode(Node node) {
-            this.node = node;
-        }
-
-        public void setDistance(int distance) {
-            this.distance = distance;
-        }
     }
 
-
     public static class Node {
-        int value;
-        Connection key = null;
+        int key;
         Node parent;
         LinkedList<Connection> connections;
 
-        public Node(int value) {
-            this.value = value;
-            this.connections = new LinkedList<Connection>();
-        }
-
-        public LinkedList<Connection> getConnections() {
-            return connections;
-        }
-
-        public void setKey(Connection key) {
-            this.key = key;
+        public Node() {
+            this.connections = new LinkedList<>();
         }
 
         public void createConnection(Node node, int weight) {
@@ -57,55 +35,64 @@ public class aflevering_2_5 {
         }
     }
 
-    public static void isItProfitable() {
+    public static void isItProfitable(LinkedList<Node> graph, Node startNode) {
+        PriorityQueue<Node> nodesArray = new PriorityQueue<Node>((node1, node2) -> {
+            return node1.key - node2.key;
+        });
 
-        // Add all element to queue
-        queue.addAll(nodesArray);
+        // Add to holder array
+        for (Node node : graph) {
+            node.key = 999999;
+            node.parent = null;
+            nodesArray.add(node);
+        }
 
-        Node node = nodesArray.get(0);
-        node.setKey(new Connection(node, 0));
+        // Set the first element to point to itself
+        startNode.key = 0;
+        startNode.parent = startNode;
 
-        while (!queue.isEmpty()) {
-            Node element = queue.remove();
-            LinkedList<Connection> neighbours = element.getConnections();
-
-            // Get the lowest weight connection
-            Node currentNode = getLowestKey();
-            for (int i = 0; i < neighbours.size(); i++) {
-                if (neighbours.get(i).distance > currentNode.key.distance) {
-                    neighbours.get(i).node.key = currentNode.key;
-                    neighbours.get(i).node.parent = currentNode;
+        while (nodesArray.size() != 0) {
+            Node extractedNode = nodesArray.poll();
+            for (int i = 0; i < extractedNode.connections.size(); i++) {
+                if (nodesArray.contains(extractedNode.connections.get(i).node) && extractedNode.connections.get(i).distance < extractedNode.connections.get(i).node.key) {
+                    nodesArray.remove(extractedNode.connections.get(i).node);
+                    extractedNode.connections.get(i).node.key = extractedNode.connections.get(i).distance;
+                    extractedNode.connections.get(i).node.parent = extractedNode;
+                    nodesArray.add(extractedNode.connections.get(i).node);
                 }
             }
-
-        }
-    }
-
-    public static Node getLowestKey() {
-        Node lowestNode = nodesArray.get(0);
-
-        for (int i = 0; i < nodesArray.size(); i++) {
-            if (lowestNode.key.distance > nodesArray.get(i).key.distance) {
-                lowestNode = nodesArray.get(i);
-            }
         }
 
-        return lowestNode;
+
+
+        int costs = 0;
+        for (Node node : graph) {
+            costs = costs + node.key;
+        }
+
+        if(costs >= maxCosts) {
+            System.out.println("NO");
+        } else {
+            System.out.println("YES");
+        }
+
     }
 
     public static void main(String[] args) throws IOException {
+
+        LinkedList<Node> nodesArray = new LinkedList<Node>();
 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
         int n = Integer.parseInt(in.readLine());
 
         // Create Node objects
-        for (int i = 0; i < n; i++) nodesArray.add(new Node(i));
+        for (int i = 0; i < n; i++) nodesArray.add(new Node());
 
         int m = Integer.parseInt(in.readLine());
 
         // Calculate the total price is must cost
-        maxCosts = Integer.parseInt(in.readLine()) * m;
+        maxCosts = Integer.parseInt(in.readLine()) * (n-1);
 
         for (int i = 0; i < m; i++) {
             StringTokenizer st = new StringTokenizer(in.readLine());
@@ -121,7 +108,12 @@ public class aflevering_2_5 {
             secondNode.createConnection(firstNode, weight);
         }
 
-        isItProfitable();
+
+        // The steps are:
+        // Create a prim structure
+        // Loop the prim structure through and count the total
+        // Compare the total to the expected and return "YES" or "NO"
+        isItProfitable(nodesArray, nodesArray.get(0));
 
 
     }
