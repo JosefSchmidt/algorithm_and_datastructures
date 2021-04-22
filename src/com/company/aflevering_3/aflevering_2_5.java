@@ -66,15 +66,18 @@ public class aflevering_2_5 {
 
 
         int costs = 0;
+        maxCosts = maxCosts * (graph.size()-1);
+
         for (Node node : graph) {
             costs = costs + node.key;
         }
 
-        if(costs >= maxCosts) {
-            System.out.println("NO");
-        } else {
+        if(costs < maxCosts) {
             System.out.println("YES");
+        } else {
+            System.out.println("NO");
         }
+
 
     }
 
@@ -92,7 +95,7 @@ public class aflevering_2_5 {
         int m = Integer.parseInt(in.readLine());
 
         // Calculate the total price is must cost
-        maxCosts = Integer.parseInt(in.readLine()) * (n-1);
+        maxCosts = Integer.parseInt(in.readLine());
 
         for (int i = 0; i < m; i++) {
             StringTokenizer st = new StringTokenizer(in.readLine());
