@@ -9,14 +9,17 @@ import java.util.StringTokenizer;
 
 public class aflevering_2_5 {
 
-    public static int maxCosts;
+    public static int earningPerConnection;
 
     public static class Connection {
-        Node node;
+        Node firstNode;
+        Node secondNode;
         int distance;
+        boolean visited = false;
 
-        public Connection(Node node, int distance) {
-            this.node = node;
+        public Connection(Node firstNode, Node secondNode, int distance) {
+            this.firstNode = firstNode;
+            this.secondNode = secondNode;
             this.distance = distance;
         }
     }
@@ -30,8 +33,8 @@ public class aflevering_2_5 {
             this.connections = new LinkedList<>();
         }
 
-        public void createConnection(Node node, int weight) {
-            connections.add(new Connection(node, weight));
+        public void createConnection(Connection connection) {
+            connections.add(connection);
         }
     }
 
@@ -54,25 +57,43 @@ public class aflevering_2_5 {
         while (nodesArray.size() != 0) {
             Node extractedNode = nodesArray.poll();
             for (int i = 0; i < extractedNode.connections.size(); i++) {
-                if (nodesArray.contains(extractedNode.connections.get(i).node) && extractedNode.connections.get(i).distance < extractedNode.connections.get(i).node.key) {
-                    nodesArray.remove(extractedNode.connections.get(i).node);
-                    extractedNode.connections.get(i).node.key = extractedNode.connections.get(i).distance;
-                    extractedNode.connections.get(i).node.parent = extractedNode;
-                    nodesArray.add(extractedNode.connections.get(i).node);
+                if (nodesArray.contains(extractedNode.connections.get(i).firstNode) && extractedNode.connections.get(i).distance < extractedNode.connections.get(i).firstNode.key) {
+                    nodesArray.remove(extractedNode.connections.get(i).firstNode);
+                    extractedNode.connections.get(i).firstNode.key = extractedNode.connections.get(i).distance;
+                    extractedNode.connections.get(i).firstNode.parent = extractedNode;
+                    nodesArray.add(extractedNode.connections.get(i).firstNode);
+                    extractedNode.connections.get(i).visited = true;
+
+                } else if (nodesArray.contains(extractedNode.connections.get(i).secondNode) && extractedNode.connections.get(i).distance < extractedNode.connections.get(i).secondNode.key) {
+                    nodesArray.remove(extractedNode.connections.get(i).secondNode);
+                    extractedNode.connections.get(i).secondNode.key = extractedNode.connections.get(i).distance;
+                    extractedNode.connections.get(i).secondNode.parent = extractedNode;
+                    nodesArray.add(extractedNode.connections.get(i).secondNode);
+                    extractedNode.connections.get(i).visited = true;
+                }
+            }
+        }
+
+        int ourEarnings = 0;
+
+        // Remove connections that has been used
+        for (int i = 0; i <graph.size(); i++) {
+            for (int j = 0; j <graph.get(i).connections.size(); j++) {
+                if(!graph.get(i).connections.get(j).visited && graph.get(i).connections.get(j).distance < earningPerConnection) {
+                    ourEarnings = ourEarnings + (earningPerConnection - graph.get(i).connections.get(j).distance);
                 }
             }
         }
 
 
-
-        int costs = 0;
-        maxCosts = maxCosts * (graph.size()-1);
+        int totalCosts = 0;
+        ourEarnings = ourEarnings + (earningPerConnection * (graph.size() - 1));
 
         for (Node node : graph) {
-            costs = costs + node.key;
+            totalCosts = totalCosts + node.key;
         }
 
-        if(costs < maxCosts) {
+        if (totalCosts < ourEarnings) {
             System.out.println("YES");
         } else {
             System.out.println("NO");
@@ -95,7 +116,7 @@ public class aflevering_2_5 {
         int m = Integer.parseInt(in.readLine());
 
         // Calculate the total price is must cost
-        maxCosts = Integer.parseInt(in.readLine());
+        earningPerConnection = Integer.parseInt(in.readLine());
 
         for (int i = 0; i < m; i++) {
             StringTokenizer st = new StringTokenizer(in.readLine());
@@ -107,8 +128,10 @@ public class aflevering_2_5 {
             Node firstNode = nodesArray.get(firstValue);
             Node secondNode = nodesArray.get(secondValue);
 
-            firstNode.createConnection(secondNode, weight);
-            secondNode.createConnection(firstNode, weight);
+            Connection connection = new Connection(firstNode, secondNode, weight);
+            firstNode.createConnection(connection);
+            secondNode.createConnection(connection);
+
         }
 
 
